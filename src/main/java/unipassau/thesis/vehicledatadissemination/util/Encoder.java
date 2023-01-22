@@ -5,18 +5,17 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Encoder {
 
+    public static final String hashAlgorithm = "SHA3-256";
 
     public static byte[] xmlToHash(String filePath){
+
         MessageDigest digest = null;
         byte[] encodedhash = null;
         try {
-            digest = MessageDigest.getInstance("SHA3-256");
+            digest = MessageDigest.getInstance(hashAlgorithm);
             byte[] data = Files.readAllBytes(Paths.get(filePath));
             encodedhash = digest.digest(data);
             return encodedhash;

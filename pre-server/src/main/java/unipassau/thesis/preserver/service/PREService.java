@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import unipassau.thesis.preserver.util.OpenPRE;
 
 import java.io.*;
+import java.util.HashMap;
 
 @Service
 public class PREService {
@@ -13,11 +14,14 @@ public class PREService {
     @Autowired
     org.springframework.core.env.Environment env;
 
-    public String reEncryptionService(byte[] encryptedData) throws FileNotFoundException {
+    @Autowired
+    private HashMap<String, String> reEncryptionKeysMap;
+
+    public byte[] reEncryptionService(byte[] encryptedData, String subjectID) throws IOException {
 
         String tempFileName = RandomStringUtils.randomAlphanumeric(12);
         try (var out = new DataOutputStream(new BufferedOutputStream(
-                new FileOutputStream(env.getProperty("pre.tmpFolder") + tempFileName, true)))){
+                new FileOutputStream(env.getProperty("app.tmpFolder") + tempFileName, true)))){
 
             out.write(encryptedData);
 
@@ -25,13 +29,11 @@ public class PREService {
             e.printStackTrace();
         }
 
-        OpenPRE.INSTANCE.ReEncrypt(env.getProperty("app.tmpFolder") + tempFileName,
-                env.getProperty("app.cryptoFolder") + "alice2bob-re-enc-key",
+        OpenPRE.INSTANCE.reEncrypt(env.getProperty("app.tmpFolder") + tempFileName,
+                env.getProperty("app.reEncKeysFolder") + reEncryptionKeysMap.get(subjectID),
                 env.getProperty("app.tmpFolder") + tempFileName + "-re");
         FileInputStream read = new FileInputStream(new File(env.getProperty("app.tmpFolder") + tempFileName + "-re"));
 
-        String decryptedData = OpenPRE.INSTANCE.Decrypt(env.getProperty("app.cryptoFolder") + "bob-private-key",
-                env.getProperty("app.tmpFolder") + tempFileName + "-re");
-        return decryptedData;
+        return read.readAllBytes();
     }
 }

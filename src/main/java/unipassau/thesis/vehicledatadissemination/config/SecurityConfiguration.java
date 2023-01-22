@@ -23,7 +23,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         auth.inMemoryAuthentication()
                 .withUser("alice").password(passwordEncoder().encode("alice")).roles("data_owner").and()
-                .withUser("bob").password(passwordEncoder().encode("bob")).roles("data_consumer");
+                .withUser("bob").password(passwordEncoder().encode("bob")).roles("data_consumer").and()
+                .withUser("carlos").password(passwordEncoder().encode("carlos")).roles("data_consumer");
     }
 
     /**
@@ -37,7 +38,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .httpBasic().and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/data/re-encrypt").hasRole("data_consumer").and()
+                .antMatchers(HttpMethod.POST, "/authorize").hasRole("data_consumer").and()
                 .csrf().disable();
     }
 

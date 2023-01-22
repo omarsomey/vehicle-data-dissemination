@@ -11,8 +11,8 @@ public interface OpenPRE extends Library {
                     OpenPRE.class);
     void cryptoContextGen(String schemeName, String cryptoFolder, String filename, int plaintextModulus);
     void keysGen(String cryptoContext, String destinationPath);
-    void  Encrypt(String publickey, String plaintext, String destinationPath);
-    String Decrypt(String secretKey, String ciphertext);
-    void ReKeyGen(String secretKey, String publicKey, String destinationPath);
-    void ReEncrypt(String ciphertext, String reEncryptionKey, String destinationPath);
+    void  encrypt(String publickey, String plaintext, String destinationPath);
+    String decrypt(String secretKey, String ciphertext);
+    void reKeyGen(String secretKey, String publicKey, String destinationPath);
+    void reEncrypt(String ciphertext, String reEncryptionKey, String destinationPath);
 }

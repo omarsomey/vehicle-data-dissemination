@@ -4,6 +4,7 @@ package unipassau.thesis.vehicledatadissemination.demo;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,13 +32,10 @@ public class Alice {
 
     public static int count=0;
     public static JSONObject res = new JSONObject();
-
-
+    public static String randomPlaintext;
 
 
     public static void main(String[] args) {
-
-        System.out.print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSs");
 
         OkHttpClient httpClient = new OkHttpClient();
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
@@ -58,12 +56,13 @@ public class Alice {
                 }
 
                 System.out.print(res.toString(4) + " ");
+                // Remove comment if there is no GPS data
+                //randomPlaintext= RandomStringUtils.randomAlphanumeric(8192);
                 LOG.info("Encrypting Data ...");
-                OpenPRE.INSTANCE.Encrypt(pubKey, res.toString(), dataFolder + count);
+                OpenPRE.INSTANCE.encrypt(pubKey, res.toString(), dataFolder + count);
 
                 LOG.info("Sticking hash of the policy to the data ...");
                 DataHandler.writer(policyFolder + args[1], dataFolder + count);
-
 
                 if (++count>= Integer.parseInt(args[0]) ) {
                     exec.shutdown();

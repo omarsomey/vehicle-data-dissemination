@@ -20,14 +20,16 @@ public class EmbeddedPdpInterceptor {
             .getLogger(EmbeddedPdpInterceptor.class);
 
     private final BasePdpEngine pdp;
+
     public EmbeddedPdpInterceptor(final BasePdpEngine pdp)
     {
         this.pdp = pdp;
     }
+
     public boolean authorize(Principal principal, String ressourceID, String actionID) throws Exception
     {
         final DecisionRequest request = createRequest(principal, ressourceID, actionID);
-        LOG.debug("XACML Request: {}", request);
+        LOG.info("XACML Request: {}", request);
 
 
         // Evaluate the request
@@ -39,17 +41,15 @@ public class EmbeddedPdpInterceptor {
         }
 
 
-        LOG.info("XACML authorization result: {}", result);
+        LOG.info("XACML authorization response: {}", result);
+        LOG.info("XACML authorization Decision: {}", result.getDecision());
+
         return result.getDecision() == DecisionType.PERMIT;
     }
 
     private DecisionRequest createRequest(Principal principal, String ressourceID, String actionID)
     {
 
-
-        /*
-         * 3 attribute categories, 7 total attributes
-         */
         final DecisionRequestBuilder<?> requestBuilder = pdp.newRequestBuilder(3, 3);
 
         // Add subject ID attribute (access-subject category), no issuer, string value "john"
@@ -69,7 +69,7 @@ public class EmbeddedPdpInterceptor {
         requestBuilder.putNamedAttributeIfAbsent(actionIdAttributeId, actionIdAttributeValues);
 
 
-        // Environment - current date/time will be set by the PDP
+        // When there is no more attributes, we build the request.
         return requestBuilder.build(false);
     }
 

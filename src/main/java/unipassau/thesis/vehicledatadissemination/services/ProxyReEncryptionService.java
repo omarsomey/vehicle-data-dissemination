@@ -1,29 +1,29 @@
 package unipassau.thesis.vehicledatadissemination.services;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.security.Principal;
 
 @Service
 public class ProxyReEncryptionService {
     @Autowired
     org.springframework.core.env.Environment env;
 
-    public String reEncrypt(byte[] data){
+    public byte[] reEncrypt(byte[] data, Principal principal){
         OkHttpClient httpClient = new OkHttpClient();
         Request locationRequest = new Request.Builder()
-                .url(env.getProperty("pre.location"))
+                .url(env.getProperty("pre.location") + "re-encrypt")
                 .post(RequestBody.create(data))
+                .addHeader("subjectID", principal.getName())
                 .build();
 
 
+
         try (Response response = httpClient.newCall(locationRequest).execute()) {
-            String result = response.body().string();
+            byte[] result = response.body().bytes();
 
             return result;
 
