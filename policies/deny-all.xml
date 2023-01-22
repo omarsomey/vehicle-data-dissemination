@@ -7,7 +7,7 @@
 
     <Policy
             Version="1.0"
-            PolicyId="SimpleDenyPolicy"
+            PolicyId="DenyAll"
             RuleCombiningAlgId="urn:oasis:names:tc:xacml:3.0:rule-combining-algorithm:deny-unless-permit">
 
         <Target/>
